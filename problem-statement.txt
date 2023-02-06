@@ -1,0 +1,34 @@
+Create a banking app as per the class diagram shown in the example with Account and Person which has the deposit, withdraw and transfer functionality.
+The App should have the following functionalities.
+1. Total_balance of a customer is the sum of all balances of his/her accounts.
+2. Customers should be able to transfer or withdraw money from one account to the other if the balance is sufficient.
+3. Customers should be able to transfer money internally between their own accounts if the balance is sufficient.
+4. Customers can deposit cash to any of their own accounts.
+5. Initial balance of an account must be Rs. 1000 at the time of account creation
+6. Customer can view his total as well as individual balances of each account
+
+Constraints
+Every customer may have more than one account;
+Balance to be maintained Account wise;
+Total Balance to be maintained customer wise;
+
+Bank
+id
+full_name
+abbreviation
+
+Accounts
+id
+account_name
+bank_id
+balance
+
+Customer
+id
+first_name
+last_name
+balance
+
+npx sequelize-cli model:generate --name Bank --attributes full_name:string,abbreviation:string --underscored
+npx sequelize-cli model:generate --name Account --attributes account_name:string,bankID:uuid,customerID:uuid,balance:double --underscored
+npx sequelize-cli model:generate --name Customer --attributes first_name:string,last_name:string,email:string,password:string,balance:double --underscored
