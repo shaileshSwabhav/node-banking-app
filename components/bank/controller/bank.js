@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes')
-const { addBank, getBanks, updateBank: updateBankService } = require("../service/bank")
+const { addBank, getBanks, updateBank: updateBankService, deleteBank: deleteBankService } = require("../service/bank")
 const { Bank } = require("../../../view/bank/bank")
 
 const createBank = async (req, res, next) => {
@@ -31,6 +31,21 @@ const updateBank = async (req, res, next) => {
   }
 }
 
+const deleteBank = async (req, res, next) => {
+  try {
+    const bankID = req.params.bankID
+    const bank = new Bank()
+    bank.setBankID(bankID)
+
+    await deleteBankService(bank)
+
+    res.status(StatusCodes.ACCEPTED).json(null)
+  } catch (error) {
+    console.error(error);
+    next(error)
+  }
+}
+
 const getAllBanks = async (req, res, next) => {
   try {
     const queryparams = req.body.query
@@ -43,4 +58,4 @@ const getAllBanks = async (req, res, next) => {
   }
 }
 
-module.exports = { createBank, getAllBanks, updateBank }
+module.exports = { createBank, getAllBanks, updateBank, deleteBank }

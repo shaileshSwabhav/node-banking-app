@@ -33,6 +33,22 @@ const updateBank = async (bank) => {
   }
 }
 
+const deleteBank = async (bank) => {
+  const transaction = await db.sequelize.transaction()
+
+  try {
+    // validations
+    await bank.doesBankExist()
+
+    // delete
+    await bank.deleteBank(transaction)
+    await transaction.commit()
+  } catch (error) {
+    await transaction.rollback()
+    throw new BankingAppError.BadRequestError(error)
+  }
+}
+
 const getBanks = async (queryparams) => {
   try {
     const banks = await Bank.getBanks(queryparams)
@@ -43,4 +59,4 @@ const getBanks = async (queryparams) => {
   }
 }
 
-module.exports = { addBank, getBanks, updateBank }
+module.exports = { addBank, getBanks, updateBank, deleteBank }

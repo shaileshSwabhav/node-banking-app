@@ -87,6 +87,20 @@ class Bank {
     }
   }
 
+  async deleteBank(transaction) {
+    try {
+      const bank = await db.Bank.destroy({
+        where: {
+          id: this.id
+        },
+        transaction: transaction
+      })
+      return bank
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   static createResponse(bank) {
     return {
       id: bank.id,
