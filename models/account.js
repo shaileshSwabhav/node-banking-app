@@ -1,4 +1,6 @@
 'use strict';
+const { v4 } = require('uuid');
+
 const {
   Model
 } = require('sequelize');
@@ -26,5 +28,8 @@ module.exports = (sequelize, DataTypes) => {
     paranoid: true,
     tableName: 'accounts',
   });
+
+  Account.beforeCreate(account => account.id = v4());
+
   return Account;
 };
