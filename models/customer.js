@@ -1,4 +1,7 @@
 'use strict';
+
+const { v4 } = require('uuid');
+
 const {
   Model
 } = require('sequelize');
@@ -11,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Customer.belongsTo(models.Account, { foreignKey: "customer_id" })
+      // Customer.belongsTo(models.Account, { foreignKey: "customer_id" })
     }
   }
   Customer.init({
@@ -27,5 +30,8 @@ module.exports = (sequelize, DataTypes) => {
     paranoid: true,
     tableName: "customers"
   });
+
+  Customer.beforeCreate(customer => customer.id = v4());
+
   return Customer;
 };
