@@ -1,9 +1,15 @@
 const BankingAppError = require("../../errors")
+const db = require("../../models")
 
 class AccountTransaction {
   constructor(id, amount) {
     this.id = id
     this.amount = amount
+    this.accountID = null
+  }
+
+  setAccountID(accountID) {
+    this.accountID = accountID
   }
 
   setID(id) {
@@ -47,8 +53,12 @@ class AccountTransaction {
     try {
       const account = await this.getAccount(transaction)
 
-      if (account.balance < this.amount) {
-        throw new BankingAppError.BadRequestError("Withdrawing amoubut cannot be greater than current balance")
+      if (account.balance < this.balance) {
+        throw new BankingAppError.BadRequestError("Withdrawing amount cannot be greater than current balance")
+      }
+
+      if (account.balance - this.balance < 1000) {
+        throw new BankingAppError.BadRequestError(`This violates minimum balance that should be maintained in account`)
       }
 
       const customer = await this.getCustomer(transaction)
@@ -61,7 +71,9 @@ class AccountTransaction {
   }
 
   async updateCustomerBalance(customerID, balance, transaction) {
+    console.log(" === updateCustomerBalance ==== ");
     try {
+
       await db.Customer.update({
         balance: balance
       }, {

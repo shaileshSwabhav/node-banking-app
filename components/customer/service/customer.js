@@ -16,4 +16,8 @@ const addCustomer = async (customer) => {
   }
 }
 
-module.exports = { addCustomer }
+const getCustomer = async () => {
+
+}
+
+module.exports = { addCustomer, getCustomer }

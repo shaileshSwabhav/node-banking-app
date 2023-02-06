@@ -1,5 +1,6 @@
 const BankingAppError = require("../../errors")
 const { AccountTransaction } = require("./account-transaction")
+const db = require("../../models")
 
 class Account {
   constructor(accountName, bankID, customerID, balance) {
@@ -30,6 +31,7 @@ class Account {
   }
 
   async doesAccountExist() {
+    console.log(" === doesAccountExist ==== ");
     try {
       const findAccount = await db.Account.findOne({
         where: {
@@ -46,6 +48,7 @@ class Account {
   }
 
   async doesBankExist(bankID) {
+    console.log(" === doesBankExist ==== ");
     try {
       const findBank = await db.Bank.findOne({
         where: {
@@ -78,6 +81,7 @@ class Account {
   }
 
   async doesAccountExistForBank() {
+    console.log(" === doesAccountExistForBank ==== ");
     try {
       const findAccount = await db.Account.findOne({
         where: {
@@ -86,7 +90,7 @@ class Account {
         }
       })
 
-      if (!findAccount) {
+      if (findAccount) {
         throw new BankingAppError.BadRequestError("Account already exist for specified bank.")
       }
     } catch (error) {
@@ -97,20 +101,22 @@ class Account {
   createPayload() {
     return {
       id: this.id,
-      accountName: this.accountName,
-      bankID: this.bankID,
-      customerID: this.customerID,
+      account_name: this.accountName,
+      bank_id: this.bankID,
+      customer_id: this.customerID,
       balance: this.balance,
     }
   }
 
   async addAccount(transaction) {
+    console.log(" === addAccount ==== ");
     try {
       const account = await db.Account.create(this.createPayload(), { transaction: transaction })
       const customer = await this.getCustomer(transaction)
 
       const accountTransaction = new AccountTransaction(this.id, this.balance)
-      await accountTransaction.updateCustomerBalance(customer.balance + this.balance, transaction)
+      const balance = customer.balance + this.balance
+      await accountTransaction.updateCustomerBalance(this.customerID, balance, transaction)
       return account
     } catch (error) {
       throw new BankingAppError.BadRequestError(error)
@@ -145,13 +151,15 @@ class Account {
   }
 
   async getCustomer(transaction) {
+    console.log(" === getCustomer ==== ", this.customerID);
     try {
-      await db.Customer.findOne({
+      const customer = await db.Customer.findOne({
         where: {
           id: this.customerID
         },
         transaction: transaction
       })
+      return customer
     } catch (error) {
       throw new BankingAppError.BadRequestError(error)
     }

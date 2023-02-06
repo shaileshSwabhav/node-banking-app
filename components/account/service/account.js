@@ -2,8 +2,8 @@ const BankingAppError = require("../../../errors")
 const db = require("../../../models")
 
 const addAccount = async (account) => {
+  const transaction = await db.sequelize.transaction()
   try {
-    const transaction = await db.sequelize.transaction()
 
     // validations
     await account.doesBankExist(account.bankID)
@@ -21,8 +21,8 @@ const addAccount = async (account) => {
 }
 
 const deposit = async (accountTransaction) => {
+  const transaction = await db.sequelize.transaction()
   try {
-    const transaction = await db.sequelize.transaction()
 
     await accountTransaction.doesAccountExist()
     await accountTransaction.deposit()
@@ -35,8 +35,8 @@ const deposit = async (accountTransaction) => {
 }
 
 const withdraw = async (accountTransaction) => {
+  const transaction = await db.sequelize.transaction()
   try {
-    const transaction = await db.sequelize.transaction()
 
     await accountTransaction.doesAccountExist()
     await accountTransaction.withdraw()
