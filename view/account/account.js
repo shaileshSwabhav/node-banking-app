@@ -8,6 +8,7 @@ class Account {
     this.bankID = bankID
     this.customerID = customerID
     this.balance = balance
+    this.accountTransaction = []
   }
 
   setID(id) {

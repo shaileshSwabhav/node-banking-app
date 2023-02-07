@@ -2,7 +2,8 @@ const db = require("../../models/index")
 const BankingAppError = require("../../errors")
 const { Op } = require("sequelize");
 const uuid = require("uuid")
-const { Account } = require("../account/account")
+const { Account } = require("../account/account");
+const { AccountTransaction } = require("../account/account-transaction");
 
 class Customer {
   constructor(firstName, lastName, email, password, balance) {
@@ -102,7 +103,20 @@ class Customer {
   static createAccountResponse(acc) {
     const account = new Account(acc.account_name, acc.bank_id, acc.customer_id, acc.balance)
     account.setID(acc.id)
+
+    if (acc.AccountTransactions && acc.AccountTransactions?.length > 0) {
+      for (let index = 0; index < acc.AccountTransactions.length; index++) {
+        account.accountTransaction.push(Customer.createAccountTransactionResponse(acc.AccountTransactions[index]))
+      }
+    }
     return account
+  }
+
+  static createAccountTransactionResponse(transaction) {
+    const accountTransaction = new AccountTransaction(transaction.amount, transaction.from_account_id, transaction.to_account_id)
+    accountTransaction.setID(transaction.id)
+
+    return accountTransaction
   }
 
   static async getCustomers(queryparams) {
@@ -128,8 +142,8 @@ class Customer {
         }
       }
 
-      return cust
-      // return customers
+      // return cust
+      return customers
     } catch (error) {
       console.error(error);
       throw new BankingAppError.BadRequestError(error)
