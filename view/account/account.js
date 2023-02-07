@@ -110,7 +110,7 @@ class Account {
       const account = await db.Account.create(this.createPayload(), { transaction: transaction })
       const customer = await this.getCustomer(transaction)
 
-      const accountTransaction = new AccountTransaction(this.id, this.balance)
+      const accountTransaction = new AccountTransaction(this.balance, this.id)
       const balance = customer.balance + this.balance
       await accountTransaction.updateCustomerBalance(this.customerID, balance, transaction)
       return account

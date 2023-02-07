@@ -1,5 +1,9 @@
 const { StatusCodes } = require('http-status-codes')
-const { addAccount: addAccountService, deposit: depositService, withdraw: withdrawService } = require("../service/account")
+const { addAccount: addAccountService,
+  deposit: depositService,
+  withdraw: withdrawService,
+  transfer: transferService,
+} = require("../service/account")
 const { Account } = require("../../../view/account/account")
 const { AccountTransaction } = require('../../../view/account/account-transaction')
 
@@ -25,12 +29,12 @@ const addAccount = async (req, res, next) => {
 const deposit = async (req, res, next) => {
   try {
     const { amount } = req.body
-    const accountID = req.params.accountID
+    const fromAccountID = req.params.accountID
 
-    const accountTransaction = new AccountTransaction(accountID, amount)
+    const accountTransaction = new AccountTransaction(amount, fromAccountID, null)
 
     await depositService(accountTransaction)
-    res.status(StatusCodes.CREATED).json(null)
+    res.status(StatusCodes.ACCEPTED).json(null)
   } catch (error) {
     console.error(error);
     next(error)
@@ -40,16 +44,30 @@ const deposit = async (req, res, next) => {
 const withdraw = async (req, res, next) => {
   try {
     const { amount } = req.body
-    const accountID = req.params.accountID
+    const fromAccountID = req.params.accountID
 
-    const accountTransaction = new AccountTransaction(accountID, amount)
+    const accountTransaction = new AccountTransaction(amount, fromAccountID, null)
 
     await withdrawService(accountTransaction)
-    res.status(StatusCodes.CREATED).json(null)
+    res.status(StatusCodes.ACCEPTED).json(null)
   } catch (error) {
     console.error(error);
     next(error)
   }
 }
 
-module.exports = { addAccount, deposit, withdraw }
+const transfer = async (req, res, next) => {
+  try {
+    const { amount, toAccountID } = req.body
+    const fromAccountID = req.params.accountID
+    const accountTransaction = new AccountTransaction(amount, fromAccountID, toAccountID)
+
+    await transferService(accountTransaction)
+    res.status(StatusCodes.ACCEPTED).json(null)
+  } catch (error) {
+    console.log(error);
+    next(error)
+  }
+}
+
+module.exports = { addAccount, deposit, withdraw, transfer }
