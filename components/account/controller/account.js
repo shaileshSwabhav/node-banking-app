@@ -7,6 +7,7 @@ const addAccount = async (req, res, next) => {
   try {
     const { accountName, bankID, customerID, balance } = req.body
     const account = new Account(accountName, bankID, customerID, balance)
+    // account.initializeAccount(accountName, bankID, customerID, balance)
 
     if (balance < 1000) {
       res.status(StatusCodes.BAD_REQUEST).json({ error: "Minimum Balance to create account is 1000." })

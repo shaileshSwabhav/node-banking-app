@@ -31,7 +31,6 @@ class Account {
   }
 
   async doesAccountExist() {
-    console.log(" === doesAccountExist ==== ");
     try {
       const findAccount = await db.Account.findOne({
         where: {
@@ -48,7 +47,6 @@ class Account {
   }
 
   async doesBankExist(bankID) {
-    console.log(" === doesBankExist ==== ");
     try {
       const findBank = await db.Bank.findOne({
         where: {
@@ -81,7 +79,6 @@ class Account {
   }
 
   async doesAccountExistForBank() {
-    console.log(" === doesAccountExistForBank ==== ");
     try {
       const findAccount = await db.Account.findOne({
         where: {
@@ -109,7 +106,6 @@ class Account {
   }
 
   async addAccount(transaction) {
-    console.log(" === addAccount ==== ");
     try {
       const account = await db.Account.create(this.createPayload(), { transaction: transaction })
       const customer = await this.getCustomer(transaction)
@@ -137,21 +133,32 @@ class Account {
     }
   }
 
+  static createResponse(account) {
+    return {
+      id: account.id,
+      accountName: account.account_name,
+      bankID: account.bank_id,
+      customerID: account.customer_id,
+      balance: account.balance,
+    }
+  }
+
   async getAccount(transaction) {
     try {
-      await db.Account.findOne({
+      const account = await db.Account.findOne({
         where: {
           id: this.id
         },
         transaction: transaction
       })
+
+      return this.createResponse(account)
     } catch (error) {
       throw new BankingAppError.BadRequestError(error)
     }
   }
 
   async getCustomer(transaction) {
-    console.log(" === getCustomer ==== ", this.customerID);
     try {
       const customer = await db.Customer.findOne({
         where: {

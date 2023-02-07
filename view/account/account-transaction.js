@@ -38,12 +38,12 @@ class AccountTransaction {
 
   async deposit(transaction) {
     try {
-      const customer = await this.getCustomer(transaction)
       const account = await this.getAccount(transaction)
+      const customer = await this.getCustomer(account.customerID, transaction)
 
       await this.updateCustomerBalance(customer.id, customer.balance + this.amount, transaction)
-      this.amount = account.balance + this.amount
-      await this.updateAccount(transaction)
+      // this.amount = account.balance + this.amount
+      await this.updateAccountBalance(account.balance + this.amount, transaction)
     } catch (error) {
       throw new BankingAppError.BadRequestError(error)
     }
@@ -53,15 +53,15 @@ class AccountTransaction {
     try {
       const account = await this.getAccount(transaction)
 
-      if (account.balance < this.balance) {
+      if (account.balance < this.amount) {
         throw new BankingAppError.BadRequestError("Withdrawing amount cannot be greater than current balance")
       }
 
-      if (account.balance - this.balance < 1000) {
+      if (account.balance - this.amount < 1000) {
         throw new BankingAppError.BadRequestError(`This violates minimum balance that should be maintained in account`)
       }
 
-      const customer = await this.getCustomer(transaction)
+      const customer = await this.getCustomer(account.customerID, transaction)
 
       await this.updateCustomerBalance(customer.id, customer.balance - this.amount, transaction)
       await this.updateAccountBalance(account.balance - this.amount, transaction)
@@ -71,9 +71,7 @@ class AccountTransaction {
   }
 
   async updateCustomerBalance(customerID, balance, transaction) {
-    console.log(" === updateCustomerBalance ==== ");
     try {
-
       await db.Customer.update({
         balance: balance
       }, {
@@ -89,7 +87,7 @@ class AccountTransaction {
 
   async updateAccountBalance(balance, transaction) {
     try {
-      await db.Customer.update({
+      await db.Account.update({
         balance: balance
       }, {
         where: {
@@ -97,6 +95,54 @@ class AccountTransaction {
         },
         transaction: transaction
       })
+    } catch (error) {
+      throw new BankingAppError.BadRequestError(error)
+    }
+  }
+
+  createCustomerResponse(customer) {
+    return {
+      id: customer.id,
+      fistName: customer.first_name,
+      lastName: customer.first_name,
+      email: customer.email,
+      balance: customer.balance,
+    }
+  }
+
+  async getCustomer(customerID, transaction) {
+    try {
+      const customer = await db.Customer.findOne({
+        where: {
+          id: customerID
+        },
+        transaction: transaction
+      })
+      return this.createCustomerResponse(customer)
+    } catch (error) {
+      throw new BankingAppError.BadRequestError(error)
+    }
+  }
+
+  createAccountResponse(account) {
+    return {
+      id: account.id,
+      accountName: account.account_name,
+      bankID: account.bank_id,
+      customerID: account.customer_id,
+      balance: account.balance,
+    }
+  }
+
+  async getAccount(transaction) {
+    try {
+      const account = await db.Account.findOne({
+        where: {
+          id: this.id
+        },
+        transaction: transaction
+      })
+      return this.createAccountResponse(account)
     } catch (error) {
       throw new BankingAppError.BadRequestError(error)
     }

@@ -77,7 +77,8 @@ class Customer {
       id: customer.id,
       fistName: customer.first_name,
       lastName: customer.first_name,
-      abbreviation: bank.abbreviation
+      email: customer.email,
+      balance: customer.balance,
     }
   }
 

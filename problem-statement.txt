@@ -8,6 +8,7 @@ The App should have the following functionalities.
 4. Customers can deposit cash to any of their own accounts -> done
 5. Initial balance of an account must be Rs. 1000 at the time of account creation -> done
 6. Customer can view his total as well as individual balances of each account -> 
+7. Add customer transactions. Customer will have many transactions.
 
 
 npx sequelize-cli model:generate --name Bank --attributes full_name:string,abbreviation:string --underscored
