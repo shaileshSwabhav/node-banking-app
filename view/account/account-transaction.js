@@ -40,6 +40,27 @@ class AccountTransaction {
     }
   }
 
+  createPayload() {
+    return {
+      from_account_id: this.fromAccountID,
+      to_account_id: this.toAccountID,
+      amount: this.amount,
+      date: this.date,
+    }
+  }
+
+  async addAccountTransaction(transaction) {
+    try {
+      const accountTransaction = await db.AccountTransaction.create(this.createPayload(), {
+        transaction: transaction
+      })
+
+      return accountTransaction
+    } catch (error) {
+      throw new BankingAppError.BadRequestError(error)
+    }
+  }
+
   async updateCustomerBalance(customerID, balance, transaction) {
     try {
       await db.Customer.update({

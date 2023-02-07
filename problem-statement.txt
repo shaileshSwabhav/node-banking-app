@@ -13,4 +13,5 @@ The App should have the following functionalities.
 
 npx sequelize-cli model:generate --name Bank --attributes full_name:string,abbreviation:string --underscored
 npx sequelize-cli model:generate --name Account --attributes account_name:string,bankID:uuid,customerID:uuid,balance:double --underscored
+npx sequelize-cli model:generate --name AccountTransaction --attributes fromAccountID:uuid,toAccountID:uuid,amount:double,date:timestamptz --underscored
 npx sequelize-cli model:generate --name Customer --attributes first_name:string,last_name:string,email:string,password:string,balance:double --underscored

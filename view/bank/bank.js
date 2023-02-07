@@ -102,11 +102,10 @@ class Bank {
   }
 
   static createResponse(bank) {
-    return {
-      id: bank.id,
-      fullName: bank.full_name,
-      abbreviation: bank.abbreviation
-    }
+    const b = new Bank(bank.full_name, bank.abbreviation)
+    b.setBankID(bank.id)
+
+    return b
   }
 
   static async getBanks(queryparams) {

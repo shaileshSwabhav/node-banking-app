@@ -29,9 +29,9 @@ const addAccount = async (req, res, next) => {
 const deposit = async (req, res, next) => {
   try {
     const { amount } = req.body
-    const fromAccountID = req.params.accountID
+    const toAccountID = req.params.accountID
 
-    const accountTransaction = new AccountTransaction(amount, fromAccountID, null)
+    const accountTransaction = new AccountTransaction(amount, null, toAccountID)
 
     await depositService(accountTransaction)
     res.status(StatusCodes.ACCEPTED).json(null)

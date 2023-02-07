@@ -10,8 +10,8 @@ class Account {
     this.balance = balance
   }
 
-  setAccountID(id) {
-    this.customerID = id
+  setID(id) {
+    this.id = id
   }
 
   setAccountName(accountName) {

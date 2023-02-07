@@ -32,6 +32,8 @@ const deposit = async (accountTransaction) => {
     await accountTransaction.updateCustomerBalance(customer.id, customer.balance + accountTransaction.amount, transaction)
     await accountTransaction.updateAccountBalance(account.balance + accountTransaction.amount, account.id, transaction)
 
+    await accountTransaction.addAccountTransaction(transaction)
+
     await transaction.commit()
   } catch (error) {
     console.error(error)
@@ -59,6 +61,7 @@ const withdraw = async (accountTransaction) => {
 
     await accountTransaction.updateCustomerBalance(customer.id, customer.balance - accountTransaction.amount, transaction)
     await accountTransaction.updateAccountBalance(account.balance - accountTransaction.amount, account.id, transaction)
+    await accountTransaction.addAccountTransaction(transaction)
 
     await transaction.commit()
   } catch (error) {
@@ -100,6 +103,8 @@ const transfer = async (accountTransaction) => {
 
       await accountTransaction.updateCustomerBalance(customerTwo.id, customerTwo.balance + accountTransaction.amount, transaction)
       await accountTransaction.updateAccountBalance(accountTwo.balance + accountTransaction.amount, accountTwo.id, transaction)
+
+      await accountTransaction.addAccountTransaction(transaction)
     })
 
   } catch (error) {
