@@ -23,10 +23,10 @@ const addAccount = async (account) => {
 const deposit = async (accountTransaction) => {
   const transaction = await db.sequelize.transaction()
   try {
-    await accountTransaction.doesAccountExist()
+    await accountTransaction.doesAccountExist(accountTransaction.toAccountID)
     // await accountTransaction.deposit(transaction)
-
-    const account = await accountTransaction.getAccount(transaction)
+    console.log(accountTransaction);
+    const account = await accountTransaction.getAccount(transaction, accountTransaction.toAccountID)
     const customer = await accountTransaction.getCustomer(account.customerID, transaction)
 
     await accountTransaction.updateCustomerBalance(customer.id, customer.balance + accountTransaction.amount, transaction)
@@ -71,40 +71,42 @@ const withdraw = async (accountTransaction) => {
   }
 }
 
-const transfer = async (accountTransaction) => {
+const transfer = async (accountTransactionOne, accountTransactionTwo) => {
   try {
     const result = await db.sequelize.transaction(async (transaction) => {
-      console.log(accountTransaction);
+      console.log(accountTransactionOne);
+      console.log(accountTransactionTwo);
 
       // validations
-      await accountTransaction.doesAccountExist()
-      const accountOne = await accountTransaction.getAccount(transaction)
+      await accountTransactionOne.doesAccountExist()
+      await accountTransactionTwo.doesAccountExist()
+      const accountOne = await accountTransactionOne.getAccount(transaction)
 
-      if (accountOne.balance < accountTransaction.amount) {
+      if (accountOne.balance < accountTransactionOne.amount) {
         throw new BankingAppError.BadRequestError("Transfering amount cannot be greater than current balance")
       }
 
-      if (accountOne.balance - accountTransaction.amount < 1000) {
+      if (accountOne.balance - accountTransactionOne.amount < 1000) {
         throw new BankingAppError.BadRequestError(`This violates minimum balance that should be maintained in account`)
       }
 
-      const accountTwo = await accountTransaction.getAccount(transaction, accountTransaction.accountID)
-      console.log("accountOne -> ", accountOne);
-      console.log("accountTwo -> ", accountTwo);
+      const accountTwo = await accountTransactionTwo.getAccount(transaction)
 
       // do transactions for account one
-      const customerOne = await accountTransaction.getCustomer(accountOne.customerID, transaction)
+      const customerOne = await accountTransactionOne.getCustomer(accountOne.customerID, transaction)
 
-      await accountTransaction.updateCustomerBalance(customerOne.id, customerOne.balance - accountTransaction.amount, transaction)
-      await accountTransaction.updateAccountBalance(accountOne.balance - accountTransaction.amount, accountOne.id, transaction)
+      await accountTransactionOne.updateCustomerBalance(customerOne.id, customerOne.balance - accountTransactionOne.amount, transaction)
+      await accountTransactionOne.updateAccountBalance(accountOne.balance - accountTransactionOne.amount, accountOne.id, transaction)
+
+      await accountTransactionOne.addAccountTransaction(transaction)
 
       // do transactions for account two
-      const customerTwo = await accountTransaction.getCustomer(accountTwo.customerID, transaction)
+      const customerTwo = await accountTransactionTwo.getCustomer(accountTwo.customerID, transaction)
 
-      await accountTransaction.updateCustomerBalance(customerTwo.id, customerTwo.balance + accountTransaction.amount, transaction)
-      await accountTransaction.updateAccountBalance(accountTwo.balance + accountTransaction.amount, accountTwo.id, transaction)
+      await accountTransactionTwo.updateCustomerBalance(customerTwo.id, customerTwo.balance + accountTransactionTwo.amount, transaction)
+      await accountTransactionTwo.updateAccountBalance(accountTwo.balance + accountTransactionTwo.amount, accountTwo.id, transaction)
 
-      await accountTransaction.addAccountTransaction(transaction)
+      await accountTransactionTwo.addAccountTransaction(transaction)
     })
 
   } catch (error) {

@@ -15,13 +15,16 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       AccountTransaction.belongsTo(models.Account, { foreignKey: "from_account_id" })
       AccountTransaction.belongsTo(models.Account, { foreignKey: "to_account_id" })
+      AccountTransaction.belongsTo(models.Bank, { foreignKey: "bank_id" })
     }
   }
   AccountTransaction.init({
     from_account_id: DataTypes.UUID,
     to_account_id: DataTypes.UUID,
     amount: DataTypes.DOUBLE,
-    date: DataTypes.DATE
+    date: DataTypes.DATE,
+    type: DataTypes.STRING,
+    bank_id: DataTypes.UUID,
   }, {
     sequelize,
     modelName: 'AccountTransaction',

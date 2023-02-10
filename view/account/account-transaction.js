@@ -2,13 +2,14 @@ const BankingAppError = require("../../errors")
 const db = require("../../models")
 
 class AccountTransaction {
-  constructor(amount, fromAccountID, toAccountID) {
+  constructor(amount, fromAccountID, toAccountID, type, bankID) {
     // this.id = id
     this.amount = amount
     this.fromAccountID = fromAccountID
     this.toAccountID = toAccountID
     this.date = new Date()
-    // this.type = type
+    this.type = type
+    this.bankID = bankID
   }
 
   setAccountID(accountID) {
@@ -46,6 +47,8 @@ class AccountTransaction {
       to_account_id: this.toAccountID,
       amount: this.amount,
       date: this.date,
+      type: this.type,
+      bank_id: this.bankID
     }
   }
 

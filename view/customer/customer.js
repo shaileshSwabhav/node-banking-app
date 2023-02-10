@@ -35,17 +35,6 @@ class Customer {
     this.balance = balance
   }
 
-  createPayload() {
-    return {
-      id: this.id,
-      first_name: this.firstName,
-      last_name: this.lastName,
-      email: this.email,
-      password: this.password,
-      balance: this.balance,
-    }
-  }
-
   async doesEmailExist() {
     try {
       const findEmail = await db.Customer.findOne({
@@ -62,6 +51,17 @@ class Customer {
       }
     } catch (error) {
       throw new BankingAppError.BadRequestError(error)
+    }
+  }
+
+  createPayload() {
+    return {
+      id: this.id,
+      first_name: this.firstName,
+      last_name: this.lastName,
+      email: this.email,
+      password: this.password,
+      balance: this.balance,
     }
   }
 
@@ -113,7 +113,8 @@ class Customer {
   }
 
   static createAccountTransactionResponse(transaction) {
-    const accountTransaction = new AccountTransaction(transaction.amount, transaction.from_account_id, transaction.to_account_id)
+    const accountTransaction = new AccountTransaction(transaction.amount, transaction.from_account_id, 
+      transaction.to_account_id, transaction.type, transaction.bank_id)
     accountTransaction.setID(transaction.id)
 
     return accountTransaction
@@ -121,6 +122,10 @@ class Customer {
 
   static async getCustomers(queryparams) {
     try {
+
+      // include will do default outer join.
+      // this can be overridden with required:true -> this will do inner join
+
       const cust = await db.Customer.findAll({
         where: queryparams,
         include: [{

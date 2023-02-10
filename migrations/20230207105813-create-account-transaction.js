@@ -21,7 +21,7 @@ module.exports = {
       },
       from_account_id: {
         type: Sequelize.UUID,
-        allowNull: false,
+        // allowNull: false,
         references: {
           model: "accounts",
           key: "id"
@@ -31,7 +31,7 @@ module.exports = {
       },
       to_account_id: {
         type: Sequelize.UUID,
-        allowNull: false,
+        // allowNull: false,
         references: {
           model: "accounts",
           key: "id"
@@ -47,7 +47,21 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
+      bank_id: {
+        type: Sequelize.UUID,
+        allowNull: false,
+      },
+      type: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          isIn: {
+            args: [["Deposit", "Withdraw"]]
+          }
+        }
+      }
     });
+
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('account_transactions');

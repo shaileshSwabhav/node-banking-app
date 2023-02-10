@@ -28,10 +28,10 @@ const addAccount = async (req, res, next) => {
 
 const deposit = async (req, res, next) => {
   try {
-    const { amount } = req.body
+    const { amount, bankID } = req.body
     const toAccountID = req.params.accountID
 
-    const accountTransaction = new AccountTransaction(amount, null, toAccountID)
+    const accountTransaction = new AccountTransaction(amount, null, toAccountID, "Deposit", bankID)
 
     await depositService(accountTransaction)
     res.status(StatusCodes.ACCEPTED).json(null)
@@ -43,10 +43,10 @@ const deposit = async (req, res, next) => {
 
 const withdraw = async (req, res, next) => {
   try {
-    const { amount } = req.body
+    const { amount, bankID } = req.body
     const fromAccountID = req.params.accountID
 
-    const accountTransaction = new AccountTransaction(amount, fromAccountID, null)
+    const accountTransaction = new AccountTransaction(amount, fromAccountID, null, "Withdraw", bankID)
 
     await withdrawService(accountTransaction)
     res.status(StatusCodes.ACCEPTED).json(null)
@@ -58,11 +58,12 @@ const withdraw = async (req, res, next) => {
 
 const transfer = async (req, res, next) => {
   try {
-    const { amount, toAccountID } = req.body
+    const { amount, toAccountID, bankID } = req.body
     const fromAccountID = req.params.accountID
-    const accountTransaction = new AccountTransaction(amount, fromAccountID, toAccountID)
+    const accountTransactionOne = new AccountTransaction(amount, fromAccountID, toAccountID, "Deposit", bankID)
+    const accountTransactionTwo = new AccountTransaction(amount, toAccountID, fromAccountID, "Withdraw", bankID)
 
-    await transferService(accountTransaction)
+    await transferService(accountTransactionOne, accountTransactionTwo)
     res.status(StatusCodes.ACCEPTED).json(null)
   } catch (error) {
     console.log(error);

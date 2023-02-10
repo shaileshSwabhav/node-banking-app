@@ -21,7 +21,8 @@ const getCustomerDetails = async (req, res, next) => {
     const queryparams = req.query
     console.log(req.query);
 
-    const customers = await getCustomerDetailsService("ee2e6fd0-2b7c-4b9e-82b0-3ad97802f501")
+    // "ee2e6fd0-2b7c-4b9e-82b0-3ad97802f501"
+    const customers = await getCustomerDetailsService(queryparams)
     
     res.status(StatusCodes.OK).json(customers)
   } catch (error) {

@@ -6,9 +6,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "migrate": "npx sequelize db:migrate",
-    "undo-migrate": "npx sequelize db:migrate:undo",
-    "undo-migrate-all": "npx sequelize db:migrate:undo:all"
+    "db:migrate": "sequelize db:migrate",
+    "db:rollback": "sequelize db:migrate:undo",
+    "db:rollback:all": "sequelize db:migrate:undo:all"
   },
   "keywords": [],
   "author": "",
