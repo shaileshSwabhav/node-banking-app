@@ -7,7 +7,7 @@ const addAccount = async (account) => {
     const result = await db.sequelize.transaction(async (transaction) => {
 
       // validations
-      await account.doesBankExist(account.bankID)
+      await account.doesBankExist()
       await account.doesCustomerExist(account.customerID)
       await account.doesAccountExistForBank()
 
@@ -16,6 +16,21 @@ const addAccount = async (account) => {
     })
     console.log(result);
   } catch (error) {
+    throw new BankingAppError.BadRequestError(error)
+  }
+}
+
+const getAccounts = async (account, queryparams) => {
+  const transaction = await db.sequelize.transaction()
+  try {
+    console.log(queryparams);
+    const accounts = await account.getAccounts(transaction, queryparams)
+
+    await transaction.commit()
+    return accounts
+  } catch (error) {
+    console.error(error);
+    await transaction.rollback()
     throw new BankingAppError.BadRequestError(error)
   }
 }
@@ -115,4 +130,4 @@ const transfer = async (accountTransactionOne, accountTransactionTwo) => {
   }
 }
 
-module.exports = { addAccount, deposit, withdraw, transfer }
+module.exports = { addAccount, getAccounts, deposit, withdraw, transfer }

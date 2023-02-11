@@ -3,6 +3,7 @@ const { addAccount: addAccountService,
   deposit: depositService,
   withdraw: withdrawService,
   transfer: transferService,
+  getAccounts: getAccountsService,
 } = require("../service/account")
 const { Account } = require("../../../view/account/account")
 const { AccountTransaction } = require('../../../view/account/account-transaction')
@@ -20,6 +21,26 @@ const addAccount = async (req, res, next) => {
 
     await addAccountService(account)
     res.status(StatusCodes.ACCEPTED).json(null)
+  } catch (error) {
+    console.error(error);
+    next(error)
+  }
+}
+
+const getAccounts = async (req, res, next) => {
+  try {
+    const { bankID } = req.params
+    const query = req.query
+    const queryparams = {}
+
+    if (query.bankID) {
+      queryparams.bank_id = query.bankID
+    }
+
+    const account = new Account()
+    const accounts = await getAccountsService(account, queryparams)
+
+    res.status(StatusCodes.OK).json(accounts)
   } catch (error) {
     console.error(error);
     next(error)
@@ -71,4 +92,4 @@ const transfer = async (req, res, next) => {
   }
 }
 
-module.exports = { addAccount, deposit, withdraw, transfer }
+module.exports = { addAccount, getAccounts, deposit, withdraw, transfer }

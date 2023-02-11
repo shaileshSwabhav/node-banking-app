@@ -47,11 +47,11 @@ class Account {
     }
   }
 
-  async doesBankExist(bankID) {
+  async doesBankExist() {
     try {
       const findBank = await db.Bank.findOne({
         where: {
-          id: bankID,
+          id: this.bankID,
         }
       })
 
@@ -153,7 +153,26 @@ class Account {
         transaction: transaction
       })
 
-      return this.createResponse(account)
+      return Account.createResponse(account)
+    } catch (error) {
+      throw new BankingAppError.BadRequestError(error)
+    }
+  }
+
+  async getAccounts(transaction, queryparams) {
+    try {
+      const tempAccounts = await db.Account.findAll({
+        where: queryparams,
+        transaction: transaction
+      })
+
+      const accounts = []
+
+      for (let index = 0; index < tempAccounts.length; index++) {
+        accounts.push(Account.createResponse(tempAccounts[index]))
+      }
+
+      return accounts
     } catch (error) {
       throw new BankingAppError.BadRequestError(error)
     }
