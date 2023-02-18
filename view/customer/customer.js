@@ -75,15 +75,15 @@ class Customer {
     }
   }
 
-  static createResponse(customer) {
-    return {
-      id: customer.id,
-      fistName: customer.first_name,
-      lastName: customer.first_name,
-      email: customer.email,
-      balance: customer.balance,
-    }
-  }
+  // static createResponse(customer) {
+  //   return {
+  //     id: customer.id,
+  //     fistName: customer.first_name,
+  //     lastName: customer.first_name,
+  //     email: customer.email,
+  //     balance: customer.balance,
+  //   }
+  // }
 
   static createCustomerResponse(cust) {
     const customer = new Customer(cust.first_name, cust.last_name, cust.email, cust.password, cust.balance)

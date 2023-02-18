@@ -29,12 +29,16 @@ const addAccount = async (req, res, next) => {
 
 const getAccounts = async (req, res, next) => {
   try {
-    const { bankID } = req.params
+    // const { bankID } = req.params
     const query = req.query
     const queryparams = {}
 
     if (query.bankID) {
       queryparams.bank_id = query.bankID
+    }
+
+    if (query.customerID) {
+      queryparams.customer_id = query.customerID
     }
 
     const account = new Account()

@@ -37,6 +37,7 @@ const deleteBank = async (bank) => {
   const transaction = await db.sequelize.transaction()
 
   try {
+    console.log("============================= bank id -> ", bank.id);
     // validations
     await bank.doesBankExist()
 

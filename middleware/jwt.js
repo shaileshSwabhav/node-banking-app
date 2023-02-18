@@ -3,19 +3,17 @@ const jwt = require("jsonwebtoken")
 const BankingAppError = require("../errors")
 
 class JwtToken {
-  constructor(user) {
-    this.userID = user.id
-    this.email = user.email
-    this.firstName = user.firstName
-    this.lastName = user.lastName
+  constructor(id, username, roleName) {
+    this.credentialID = id
+    this.username = username
+    this.roleName = roleName
   }
 
   createPayload() {
     return {
-      firstName: this.firstName,
-      lastName: this.lastName,
-      userID: this.userID,
-      email: this.email,
+      username: this.username,
+      credentialID: this.credentialID,
+      roleName: this.roleName
     }
   }
 
@@ -33,7 +31,7 @@ class JwtToken {
     }
 
     try {
-      let decode = jwt.verify(cookie['token'], process.env.JWT_SECRET)
+      let decode = jwt.verify(cookie['authorization'], process.env.JWT_SECRET)
       console.log(decode);
       next()
     } catch (error) {

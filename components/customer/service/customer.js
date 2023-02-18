@@ -1,14 +1,19 @@
 const BankingAppError = require("../../../errors")
 const db = require("../../../models")
 const { Customer } = require("../../../view/customer/customer")
-
+const { register } = require("../../auth/service/auth")
+const Credential = require("../../../view/credential/credential")
 
 const addCustomer = async (customer) => {
   const transaction = await db.sequelize.transaction()
   try {
     // validations
     await customer.doesEmailExist()
-    await customer.addCustomer(transaction)
+    const response = await customer.addCustomer(transaction)
+
+    const cred = new Credential(response.id, customer.email, customer.password, "Customer")
+    await register(cred, transaction)
+
     await transaction.commit()
   } catch (error) {
     console.error(error);
