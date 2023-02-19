@@ -53,6 +53,10 @@ class Credential {
 
   async addCredential(transaction) {
     try {
+      if (!this.id) {
+        this.id = uuid.v4()
+      }
+      console.log(this);
       const credential = await db.Credential.create(this.createPayload(), { transaction: transaction })
       return credential
     } catch (error) {

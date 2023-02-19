@@ -17,6 +17,7 @@ const register = async (credential, transaction) => {
     if (!isTransactionPassed) {
       await transaction.commit()
     }
+    return credential
   } catch (error) {
     console.error(error);
     if (!isTransactionPassed) {

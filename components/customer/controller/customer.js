@@ -1,6 +1,10 @@
 const { StatusCodes } = require('http-status-codes')
 const { Customer } = require("../../../view/customer/customer")
-const { addCustomer: addCustomerService, getCustomerDetails: getCustomerDetailsService } = require("../service/customer")
+const { 
+  addCustomer: addCustomerService, 
+  getCustomerDetails: getCustomerDetailsService,
+  getCustomers: getCustomerService
+} = require("../service/customer")
 
 const addCustomer = async (req, res, next) => {
   try {
@@ -11,6 +15,20 @@ const addCustomer = async (req, res, next) => {
     res.status(StatusCodes.CREATED).json(null)
   } catch (error) {
     console.error(error)
+    next(error)
+  }
+}
+
+const getCustomers = async (req, res, next) => {
+  try {
+    const queryparams = req.query
+    console.log(req.query);
+
+    const customers = await getCustomerService(queryparams)
+
+    res.status(StatusCodes.OK).json(customers)
+  } catch (error) {
+    console.error(error);
     next(error)
   }
 }
@@ -30,4 +48,4 @@ const getCustomerDetails = async (req, res, next) => {
   }
 }
 
-module.exports = { addCustomer, getCustomerDetails }
+module.exports = { addCustomer, getCustomers, getCustomerDetails }

@@ -44,8 +44,8 @@ const deposit = async (accountTransaction) => {
     const account = await accountTransaction.getAccount(transaction, accountTransaction.toAccountID)
     const customer = await accountTransaction.getCustomer(account.customerID, transaction)
 
-    await accountTransaction.updateCustomerBalance(customer.id, customer.balance + accountTransaction.amount, transaction)
-    await accountTransaction.updateAccountBalance(account.balance + accountTransaction.amount, account.id, transaction)
+    await accountTransaction.updateCustomerBalance(customer.id, parseFloat(customer.balance) + parseFloat(accountTransaction.amount), transaction)
+    await accountTransaction.updateAccountBalance(parseFloat(account.balance) + parseFloat(accountTransaction.amount), account.id, transaction)
 
     await accountTransaction.addAccountTransaction(transaction)
 
@@ -74,8 +74,8 @@ const withdraw = async (accountTransaction) => {
 
     const customer = await accountTransaction.getCustomer(account.customerID, transaction)
 
-    await accountTransaction.updateCustomerBalance(customer.id, customer.balance - accountTransaction.amount, transaction)
-    await accountTransaction.updateAccountBalance(account.balance - accountTransaction.amount, account.id, transaction)
+    await accountTransaction.updateCustomerBalance(customer.id, parseFloat(customer.balance) - parseFloat(accountTransaction.amount), transaction)
+    await accountTransaction.updateAccountBalance(parseFloat(account.balance) - parseFloat(accountTransaction.amount), account.id, transaction)
     await accountTransaction.addAccountTransaction(transaction)
 
     await transaction.commit()
@@ -110,16 +110,16 @@ const transfer = async (accountTransactionOne, accountTransactionTwo) => {
       // do transactions for account one
       const customerOne = await accountTransactionOne.getCustomer(accountOne.customerID, transaction)
 
-      await accountTransactionOne.updateCustomerBalance(customerOne.id, customerOne.balance - accountTransactionOne.amount, transaction)
-      await accountTransactionOne.updateAccountBalance(accountOne.balance - accountTransactionOne.amount, accountOne.id, transaction)
+      await accountTransactionOne.updateCustomerBalance(customerOne.id, parseFloat(customerOne.balance) - parseFloat(accountTransactionOne.amount), transaction)
+      await accountTransactionOne.updateAccountBalance(parseFloat(accountOne.balance) - parseFloat(accountTransactionOne.amount), accountOne.id, transaction)
 
       await accountTransactionOne.addAccountTransaction(transaction)
 
       // do transactions for account two
       const customerTwo = await accountTransactionTwo.getCustomer(accountTwo.customerID, transaction)
 
-      await accountTransactionTwo.updateCustomerBalance(customerTwo.id, customerTwo.balance + accountTransactionTwo.amount, transaction)
-      await accountTransactionTwo.updateAccountBalance(accountTwo.balance + accountTransactionTwo.amount, accountTwo.id, transaction)
+      await accountTransactionTwo.updateCustomerBalance(customerTwo.id, parseFloat(customerTwo.balance) + parseFloat(accountTransactionTwo.amount), transaction)
+      await accountTransactionTwo.updateAccountBalance(parseFloat(accountTwo.balance) + parseFloat(accountTransactionTwo.amount), accountTwo.id, transaction)
 
       await accountTransactionTwo.addAccountTransaction(transaction)
     })

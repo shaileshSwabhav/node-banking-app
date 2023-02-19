@@ -29,7 +29,7 @@ const getCustomerDetails = async (customerID) => {
       // id: customerID
     }
 
-    const customers = await Customer.getCustomers(queryparams)
+    const customers = await Customer.getCustomerDetails(queryparams)
     await transaction.commit()
 
     return customers
@@ -40,8 +40,20 @@ const getCustomerDetails = async (customerID) => {
   }
 }
 
-const getCustomer = async () => {
+const getCustomers = async () => {
+  const transaction = await db.sequelize.transaction()
 
+  try {
+
+    const customers = await Customer.getCustomers()
+    await transaction.commit()
+    
+    return customers
+  } catch (error) {
+    console.error(error);
+    await transaction.rollback()
+    throw new BankingAppError.BadRequestError(error)
+  }
 }
 
-module.exports = { addCustomer, getCustomer, getCustomerDetails }
+module.exports = { addCustomer, getCustomers, getCustomerDetails }

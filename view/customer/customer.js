@@ -113,7 +113,7 @@ class Customer {
   }
 
   static createAccountTransactionResponse(transaction) {
-    const accountTransaction = new AccountTransaction(transaction.amount, transaction.from_account_id, 
+    const accountTransaction = new AccountTransaction(transaction.amount, transaction.from_account_id,
       transaction.to_account_id, transaction.type, transaction.bank_id)
     accountTransaction.setID(transaction.id)
 
@@ -121,6 +121,32 @@ class Customer {
   }
 
   static async getCustomers(queryparams) {
+    try {
+
+      const cust = await db.Customer.findAll({
+        where: queryparams,
+        order: [
+          ['createdAt', 'ASC']
+        ],
+      })
+
+      console.log("=================");
+
+      const customers = []
+      if (cust && cust?.length > 0) {
+        for (let index = 0; index < cust?.length; index++) {
+          customers.push(Customer.createCustomerResponse(cust[index]))
+        }
+      }
+
+      return customers
+    } catch (error) {
+      console.error(error);
+      throw new BankingAppError.BadRequestError(error)
+    }
+  }
+
+  static async getCustomerDetails(queryparams) {
     try {
 
       // include will do default outer join.
