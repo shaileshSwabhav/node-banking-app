@@ -130,8 +130,6 @@ class Customer {
         ],
       })
 
-      console.log("=================");
-
       const customers = []
       if (cust && cust?.length > 0) {
         for (let index = 0; index < cust?.length; index++) {

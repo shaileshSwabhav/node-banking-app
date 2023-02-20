@@ -19,7 +19,7 @@ const register = async (req, res, next) => {
     const jwt = new JwtToken(cred.id, credential.username, cred.roleName)
     const token = jwt.generateToken()
 
-    res.cookie('authorization', token)
+    res.cookie('authorization', token, { maxAge: 900000, httpOnly: false })
 
     res.status(StatusCodes.OK).json({
       id: cred.id,
@@ -58,4 +58,18 @@ const login = async (req, res, next) => {
   }
 }
 
-module.exports = { login, register }
+const dummyLogin = async (req, res, next) => {
+  const { username, password } = req.body
+
+  const jwt = new JwtToken('123456789', username, password)
+  const token = jwt.generateToken()
+
+  res.cookie('authorization', token)
+  res.status(StatusCodes.OK).json({
+    id: '123456789',
+    username: username,
+    password: password
+  })
+}
+
+module.exports = { login, register, dummyLogin }
