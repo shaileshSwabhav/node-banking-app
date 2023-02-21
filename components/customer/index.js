@@ -3,7 +3,7 @@ const { addCustomer, getCustomers, getCustomerDetails } = require("./controller/
 const customerRouter = express.Router()
 
 customerRouter.post("/", addCustomer)
-customerRouter.put("/:customerID", getCustomerDetails)
+// customerRouter.put("/:customerID", getCustomerDetails)
 customerRouter.get("/", getCustomers)
 customerRouter.get("/:customerID", getCustomerDetails)
 

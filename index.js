@@ -11,7 +11,7 @@ const notFound = require("./middleware/not-found")
 
 const router = require("./components")
 
-app.use(cors({ origin: "*", credentials: true, exposedHeaders: ['Set-Cookie', 'Date', 'ETag'] }))
+app.use(cors({ origin: "*", credentials: true, exposedHeaders: ['Set-Cookie', 'X-Total-Count', 'Date', 'ETag'] }))
 app.use(express.json())
 app.use(cookieParser())
 

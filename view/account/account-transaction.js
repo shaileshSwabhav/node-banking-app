@@ -170,7 +170,7 @@ class AccountTransaction {
       const { count, rows } = await db.AccountTransaction.findAndCountAll({
         where: queryparams,
         limit: paginate.limit || 5,
-        offset: paginate.offset || 0,
+        offset: (paginate.limit * paginate.offset) || 0,
         order: [
           ['createdAt', 'ASC']
         ],
@@ -179,9 +179,6 @@ class AccountTransaction {
           required: true,
         }],
       })
-
-      console.log("====================");
-  
 
       const accountTransactions = []
 

@@ -4,7 +4,7 @@ const { createBank, getAllBanks, updateBank, deleteBank } = require("./controlle
 
 const bankRouter = express.Router()
 
-bankRouter.post("/", JwtToken.authenticateCookie, createBank)
+bankRouter.post("/", createBank)
 bankRouter.get("/", getAllBanks)
 bankRouter.put("/:bankID", updateBank)
 bankRouter.delete("/:bankID", deleteBank)

@@ -81,7 +81,10 @@ class Customer {
     delete customer.password
 
     customer.setID(cust.id)
-    customer.credential = new Credential(cust.Credential.id, cust.Credential.username, null, cust.Credential.role_name, cust.Credential.is_active)
+
+    if (cust.Credential) {
+      customer.credential = new Credential(cust.Credential.id, cust.Credential.username, null, cust.Credential.role_name, cust.Credential.is_active)
+    }
 
     if (cust.Accounts && cust.Accounts?.length > 0) {
       for (let index = 0; index < cust.Accounts.length; index++) {
@@ -130,7 +133,7 @@ class Customer {
       const { count, rows } = await db.Customer.findAndCountAll({
         where: queryparams,
         limit: paginate.limit || 5,
-        offset: paginate.offset || 0,
+        offset: (paginate.limit * paginate.offset) || 0,
         order: [
           ['createdAt', 'ASC']
         ],
@@ -154,7 +157,7 @@ class Customer {
     }
   }
 
-  static async getCustomerDetails(queryparams) {
+  static async getCustomerDetails(queryparams, paginate) {
     try {
 
       // include will do default outer join.
@@ -181,6 +184,35 @@ class Customer {
       }
 
       return customers
+    } catch (error) {
+      console.error(error);
+      throw new BankingAppError.BadRequestError(error)
+    }
+  }
+
+
+  static async getAccountTransactions(paginate, queryparams) {
+    try {
+      const { count, rows } = await db.AccountTransaction.findAndCountAll({
+        where: queryparams,
+        limit: paginate?.limit || 5,
+        offset: (paginate?.limit * paginate?.offset) || 0,
+        order: [
+          ['createdAt', 'ASC']
+        ],
+        include: [{
+          model: db.Bank,
+          required: true,
+        }],
+      })
+
+      const accountTransactions = []
+
+      for (let index = 0; index < rows.length; index++) {
+        accountTransactions.push(Customer.createAccountTransactionResponse(rows[index]))
+      }
+
+      return { count, accountTransactions }
     } catch (error) {
       console.error(error);
       throw new BankingAppError.BadRequestError(error)
