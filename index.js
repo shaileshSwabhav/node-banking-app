@@ -11,17 +11,15 @@ const notFound = require("./middleware/not-found")
 
 const router = require("./components")
 
-app.use(cors())
+app.use(cors({ origin: "*", credentials: true, exposedHeaders: ['Set-Cookie', 'Date', 'ETag'] }))
 app.use(express.json())
 app.use(cookieParser())
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header('Content-Type', 'application/json;charset=UTF-8')
+  res.header('Access-Control-Allow-Origin', "*")
+  res.header('Access-Control-Allow-Headers', '*')
   res.header('Access-Control-Allow-Credentials', true)
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
-  )
   next()
 })
 

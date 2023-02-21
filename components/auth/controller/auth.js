@@ -32,7 +32,7 @@ const register = async (req, res, next) => {
   }
 }
 
-const login = async (req, res, next) => {
+const login = async (req, res) => {
   try {
     const { username, password } = req.body
     if (!username || !password) {
@@ -46,7 +46,14 @@ const login = async (req, res, next) => {
     const jwt = new JwtToken(cred.id, credential.username, cred.roleName)
     const token = jwt.generateToken()
 
-    res.cookie('authorization', token)
+    res.cookie('authorization', token, {
+      httpOnly: false, // try this
+      secure: false,
+      domain: '192.168.1.60',
+      sameSite: 'none',
+      maxAge: 1000 *  60 * 10,
+    })
+
     res.status(StatusCodes.OK).json({
       id: cred.id,
       username: credential.username,
@@ -54,7 +61,7 @@ const login = async (req, res, next) => {
     })
   } catch (error) {
     console.error(error);
-    next(error)
+    // next(error)
   }
 }
 

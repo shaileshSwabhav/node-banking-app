@@ -22,11 +22,11 @@ const addCustomer = async (customer) => {
   }
 }
 
-const getCustomerDetails = async (customerID) => {
+const getCustomerDetails = async (customerID, queryparams) => {
   const transaction = await db.sequelize.transaction()
   try {
     const queryparams = {
-      // id: customerID
+      id: customerID
     }
 
     const customers = await Customer.getCustomerDetails(queryparams)
@@ -40,15 +40,18 @@ const getCustomerDetails = async (customerID) => {
   }
 }
 
-const getCustomers = async () => {
+const getCustomers = async (paginate, queryparams) => {
   const transaction = await db.sequelize.transaction()
-
   try {
-
-    const customers = await Customer.getCustomers()
+    const { count, customers } = await Customer.getCustomers(paginate, queryparams)
     await transaction.commit()
-    
-    return customers
+
+    console.log("=================================================");
+    console.log(count);
+    console.log(customers);
+    console.log("=================================================");
+
+    return { count, customers }
   } catch (error) {
     console.error(error);
     await transaction.rollback()

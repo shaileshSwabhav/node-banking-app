@@ -18,9 +18,8 @@ class JwtToken {
   }
 
   generateToken() {
-    return jwt.sign(this.createPayload(), process.env.JWT_SECRET, {
-      expiresIn: '1d'
-    })
+    const token = jwt.sign(JSON.stringify(this), process.env.JWT_SECRET)
+    return token
   }
 
   static authenticateCookie(req, res, next) {

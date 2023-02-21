@@ -1,7 +1,7 @@
 const { StatusCodes } = require('http-status-codes')
 const { Customer } = require("../../../view/customer/customer")
-const { 
-  addCustomer: addCustomerService, 
+const {
+  addCustomer: addCustomerService,
   getCustomerDetails: getCustomerDetailsService,
   getCustomers: getCustomerService
 } = require("../service/customer")
@@ -22,10 +22,20 @@ const addCustomer = async (req, res, next) => {
 const getCustomers = async (req, res, next) => {
   try {
     const queryparams = req.query
-    console.log(req.query);
+    const { limit, offset } = req.query
+    console.log(req.query)
 
-    const customers = await getCustomerService(queryparams)
+    if (queryparams.limit) {
+      delete queryparams.limit
+    }
 
+    if (queryparams.offset) {
+      delete queryparams.offset
+    }
+
+    const { count, customers } = await getCustomerService({ limit, offset }, queryparams)
+
+    res.header("X-Total-Count", count)
     res.status(StatusCodes.OK).json(customers)
   } catch (error) {
     console.error(error);
@@ -35,11 +45,12 @@ const getCustomers = async (req, res, next) => {
 
 const getCustomerDetails = async (req, res, next) => {
   try {
+    const customerID = req.params.customerID
     const queryparams = req.query
-    console.log(req.query);
+    console.log(req.query)
 
     // "ee2e6fd0-2b7c-4b9e-82b0-3ad97802f501"
-    const customers = await getCustomerDetailsService(queryparams)
+    const customers = await getCustomerDetailsService(customerID, queryparams)
 
     res.status(StatusCodes.OK).json(customers)
   } catch (error) {

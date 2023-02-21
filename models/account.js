@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Account.hasMany(models.AccountTransaction, { foreignKey: 'from_account_id' })
-      Account.hasMany(models.AccountTransaction, { foreignKey: 'to_account_id' })
+      // Account.hasMany(models.AccountTransaction, { foreignKey: 'to_account_id' })
     }
   }
   Account.init({

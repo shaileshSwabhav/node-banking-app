@@ -1,5 +1,6 @@
 const BankingAppError = require("../../../errors")
 const db = require("../../../models")
+const { AccountTransaction } = require("../../../view/account/account-transaction")
 
 const addAccount = async (account) => {
   try {
@@ -130,4 +131,24 @@ const transfer = async (accountTransactionOne, accountTransactionTwo) => {
   }
 }
 
-module.exports = { addAccount, getAccounts, deposit, withdraw, transfer }
+const accountTransactions = async (accountID, paginate, queryparams) => {
+  const transaction = await db.sequelize.transaction()
+  try {
+    if (queryparams) {
+      queryparams.from_account_id = accountID
+    } else {
+      queryparams = {
+        from_account_id: accountID
+      }
+    }
+    const { count, accountTransactions } = await AccountTransaction.getAccountTransactions(paginate, queryparams)
+    await transaction.commit()
+    
+    return { count, accountTransactions }
+  } catch (error) {
+    console.error(error);
+    await transaction.rollback()
+  }
+}
+
+module.exports = { addAccount, getAccounts, deposit, withdraw, transfer, accountTransactions }

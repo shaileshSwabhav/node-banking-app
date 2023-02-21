@@ -4,6 +4,7 @@ const { addAccount: addAccountService,
   withdraw: withdrawService,
   transfer: transferService,
   getAccounts: getAccountsService,
+  accountTransactions: accountTransactionService,
 } = require("../service/account")
 const { Account } = require("../../../view/account/account")
 const { AccountTransaction } = require('../../../view/account/account-transaction')
@@ -54,9 +55,9 @@ const getAccounts = async (req, res, next) => {
 const deposit = async (req, res, next) => {
   try {
     const { amount, bankID } = req.body
-    const toAccountID = req.params.accountID
+    const fromAccountID = req.params.accountID
 
-    const accountTransaction = new AccountTransaction(amount, null, toAccountID, "Deposit", bankID)
+    const accountTransaction = new AccountTransaction(amount, fromAccountID, null, "Deposit", bankID)
 
     await depositService(accountTransaction)
     res.status(StatusCodes.ACCEPTED).json(null)
@@ -96,4 +97,28 @@ const transfer = async (req, res, next) => {
   }
 }
 
-module.exports = { addAccount, getAccounts, deposit, withdraw, transfer }
+const accountTransactions = async (req, res, next) => {
+  try {
+    const accountID = req.params.accountID
+    const queryparams = req.query
+    const { limit, offset } = req.query
+
+    if (queryparams.limit) {
+      delete queryparams.limit
+    }
+
+    if (queryparams.offset) {
+      delete queryparams.offset
+    }
+
+    const { count, accountTransactions } = await accountTransactionService(accountID, { limit, offset }, queryparams)
+
+    res.header("X-Total-Count", count)
+    res.status(StatusCodes.OK).json(accountTransactions)
+  } catch (error) {
+    console.error(error);
+    next(error)
+  }
+}
+
+module.exports = { addAccount, getAccounts, deposit, withdraw, transfer, accountTransactions }

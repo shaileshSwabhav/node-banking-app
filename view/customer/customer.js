@@ -120,24 +120,38 @@ class Customer {
     return accountTransaction
   }
 
-  static async getCustomers(queryparams) {
+  static async getCustomersCount(queryparams) {
     try {
-
-      const cust = await db.Customer.findAll({
+      const customerCount = await db.Customer.count({
         where: queryparams,
+      })
+
+      return customerCount
+    } catch (error) {
+      console.error(error);
+      throw new BankingAppError.BadRequestError(error)
+    }
+  }
+
+  static async getCustomers(paginate, queryparams) {
+    try {
+      const { count, rows } = await db.Customer.findAndCountAll({
+        where: queryparams,
+        limit: paginate.limit || 5,
+        offset: paginate.offset || 0,
         order: [
           ['createdAt', 'ASC']
         ],
       })
 
       const customers = []
-      if (cust && cust?.length > 0) {
-        for (let index = 0; index < cust?.length; index++) {
-          customers.push(Customer.createCustomerResponse(cust[index]))
+      if (rows && rows?.length > 0) {
+        for (let index = 0; index < rows?.length; index++) {
+          customers.push(Customer.createCustomerResponse(rows[index]))
         }
       }
 
-      return customers
+      return { count, customers }
     } catch (error) {
       console.error(error);
       throw new BankingAppError.BadRequestError(error)
@@ -171,7 +185,6 @@ class Customer {
         }
       }
 
-      // return cust
       return customers
     } catch (error) {
       console.error(error);

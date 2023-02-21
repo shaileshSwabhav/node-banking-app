@@ -143,6 +143,42 @@ class AccountTransaction {
       throw new BankingAppError.BadRequestError(error)
     }
   }
+
+  static createAccTransResponse(accountTransaction) {
+    return {
+      id: accountTransaction.id,
+      amount: accountTransaction.amount,
+      fromAccountID: accountTransaction.from_account_id,
+      toAccountID: accountTransaction.to_account_id,
+      date: accountTransaction.date,
+      type: accountTransaction.type,
+      bankID: accountTransaction.bank_id,
+    }
+  }
+
+  static async getAccountTransactions(paginate, queryparams) {
+    try {
+      const { count, rows } = await db.AccountTransaction.findAndCountAll({
+        where: queryparams,
+        limit: paginate.limit || 5,
+        offset: paginate.offset || 0,
+        order: [
+          ['createdAt', 'ASC']
+        ],
+      })
+
+      const accountTransactions = []
+
+      for (let index = 0; index < rows.length; index++) {
+        accountTransactions.push(this.createAccTransResponse(rows[index]))
+      }
+
+      return { count, accountTransactions }
+    } catch (error) {
+      console.error(error);
+      throw new BankingAppError.BadRequestError(error)
+    }
+  }
 }
 
 module.exports = { AccountTransaction }

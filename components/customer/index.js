@@ -4,6 +4,6 @@ const customerRouter = express.Router()
 
 customerRouter.post("/", addCustomer)
 customerRouter.get("/", getCustomers)
-customerRouter.get("/details", getCustomerDetails)
+customerRouter.get("/:customerID", getCustomerDetails)
 
 module.exports = customerRouter
