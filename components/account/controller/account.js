@@ -42,12 +42,16 @@ const getAccounts = async (req, res, next) => {
       queryparams.customer_id = query.customerID
     }
 
+    if (query.accountID) {
+      queryparams.id = query.accountID
+    }
+
     const account = new Account()
     const accounts = await getAccountsService(account, queryparams)
 
     res.status(StatusCodes.OK).json(accounts)
   } catch (error) {
-    console.error(error);
+    console.error(error)
     next(error)
   }
 }
