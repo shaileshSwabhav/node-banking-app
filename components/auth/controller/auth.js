@@ -49,8 +49,8 @@ const login = async (req, res) => {
     res.cookie('authorization', token, {
       httpOnly: false, // try this
       secure: false,
-      domain: '192.168.1.60',
-      sameSite: 'none',
+      // domain: 'localhost',
+      // sameSite: 'none',
       maxAge: 1000 *  60 * 10,
     })
 

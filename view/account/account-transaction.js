@@ -1,5 +1,6 @@
 const BankingAppError = require("../../errors")
 const db = require("../../models")
+const { Bank } = require("../bank/bank")
 
 class AccountTransaction {
   constructor(amount, fromAccountID, toAccountID, type, bankID) {
@@ -153,7 +154,15 @@ class AccountTransaction {
       date: accountTransaction.date,
       type: accountTransaction.type,
       bankID: accountTransaction.bank_id,
+      bank: this.createBankResponse(accountTransaction.Bank)
     }
+  }
+
+  static createBankResponse(bank) {
+    const b = new Bank(bank.full_name, bank.abbreviation)
+    b.setBankID(bank.id)
+
+    return b
   }
 
   static async getAccountTransactions(paginate, queryparams) {
@@ -165,11 +174,19 @@ class AccountTransaction {
         order: [
           ['createdAt', 'ASC']
         ],
+        include: [{
+          model: db.Bank,
+          required: true,
+        }],
       })
+
+      console.log("====================");
+  
 
       const accountTransactions = []
 
       for (let index = 0; index < rows.length; index++) {
+        console.log("rows ->", rows[index].Bank);
         accountTransactions.push(this.createAccTransResponse(rows[index]))
       }
 

@@ -18,7 +18,7 @@ class JwtToken {
   }
 
   generateToken() {
-    const token = jwt.sign(JSON.stringify(this), process.env.JWT_SECRET)
+    const token = jwt.sign(JSON.stringify(this), process.env.JWT_SECRET.toString())
     return token
   }
 
