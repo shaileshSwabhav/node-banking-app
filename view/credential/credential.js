@@ -4,11 +4,12 @@ const { Op } = require("sequelize");
 const uuid = require("uuid")
 
 class Credential {
-  constructor(id, username, password, roleName) {
+  constructor(id, username, password, roleName, isActive) {
     this.id = id
     this.username = username
     this.password = password
     this.roleName = roleName
+    this.isActive = isActive
   }
 
   setID(id) {
@@ -21,6 +22,10 @@ class Credential {
 
   setRoleName(roleName) {
     this.roleName = roleName
+  }
+
+  setIsActive(isActive) {
+    this.isActive = isActive
   }
 
   async doesUsernameExist() {
@@ -42,12 +47,29 @@ class Credential {
     }
   }
 
+  async doesCredentialExist() {
+    try {
+      const findCredential = await db.Credential.findOne({
+        where: {
+          id: this.id,
+        }
+      })
+
+      if (!findCredential) {
+        throw new BankingAppError.BadRequestError("Credential not found")
+      }
+    } catch (error) {
+      throw new BankingAppError.BadRequestError(error)
+    }
+  }
+
   createPayload() {
     return {
       id: this.id,
       username: this.username,
       password: this.password,
       role_name: this.roleName,
+      is_active: this.isActive
     }
   }
 
@@ -65,12 +87,29 @@ class Credential {
     }
   }
 
+  async updateCredential(transaction) {
+    try {
+      const credential = await db.Credential.update(this.createPayload(), {
+        where: {
+          id: this.id
+        },
+        transaction: transaction,
+        // fields: ['password']
+      })
+      return credential
+    } catch (error) {
+      console.error(error);
+      throw new BankingAppError.BadRequestError(error)
+    }
+  }
+
   static createResponse(credential) {
     return {
       id: credential.id,
       username: credential.username,
       password: credential.password,
       roleName: credential.role_name,
+      isActive: credential.is_active,
     }
   }
 
@@ -88,7 +127,7 @@ class Credential {
         return Credential.createResponse(cred)
       }
 
-      return null
+      throw new BankingAppError.BadRequestError({ error: "Incorrect username or password" })
     } catch (error) {
       console.error(error);
       throw new BankingAppError.BadRequestError(error)
@@ -115,7 +154,6 @@ class Credential {
         }
       }
 
-      // return cust
       return credentials
     } catch (error) {
       console.error(error);

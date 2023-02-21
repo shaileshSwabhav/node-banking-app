@@ -2,6 +2,7 @@ const db = require("../../models/index")
 const BankingAppError = require("../../errors")
 const { Op } = require("sequelize");
 const uuid = require("uuid")
+const Credential = require("../credential/credential");
 const { Account } = require("../account/account");
 const { AccountTransaction } = require("../account/account-transaction");
 
@@ -75,21 +76,12 @@ class Customer {
     }
   }
 
-  // static createResponse(customer) {
-  //   return {
-  //     id: customer.id,
-  //     fistName: customer.first_name,
-  //     lastName: customer.first_name,
-  //     email: customer.email,
-  //     balance: customer.balance,
-  //   }
-  // }
-
   static createCustomerResponse(cust) {
     const customer = new Customer(cust.first_name, cust.last_name, cust.email, cust.password, cust.balance)
     delete customer.password
 
     customer.setID(cust.id)
+    customer.credential = new Credential(cust.Credential.id, cust.Credential.username, null, cust.Credential.role_name, cust.Credential.is_active)
 
     if (cust.Accounts && cust.Accounts?.length > 0) {
       for (let index = 0; index < cust.Accounts.length; index++) {
@@ -142,6 +134,10 @@ class Customer {
         order: [
           ['createdAt', 'ASC']
         ],
+        include: [{
+          model: db.Credential,
+          required: true,
+        }]
       })
 
       const customers = []
@@ -163,7 +159,6 @@ class Customer {
 
       // include will do default outer join.
       // this can be overridden with required:true -> this will do inner join
-
       const cust = await db.Customer.findAll({
         where: queryparams,
         include: [{

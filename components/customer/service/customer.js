@@ -45,12 +45,6 @@ const getCustomers = async (paginate, queryparams) => {
   try {
     const { count, customers } = await Customer.getCustomers(paginate, queryparams)
     await transaction.commit()
-
-    console.log("=================================================");
-    console.log(count);
-    console.log(customers);
-    console.log("=================================================");
-
     return { count, customers }
   } catch (error) {
     console.error(error);

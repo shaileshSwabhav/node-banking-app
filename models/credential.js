@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      // Credential.hasOne(models.Roles, { foreignKey: 'role_id' })
+      Credential.belongsTo(models.Customer, { foreignKey: 'id' })
     }
   }
   Credential.init({
@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     // role_id: DataTypes.UUID,
     role_name: DataTypes.STRING,
+    is_active: DataTypes.BOOLEAN,
   }, {
     sequelize,
     modelName: 'Credential',

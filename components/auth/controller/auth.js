@@ -1,7 +1,7 @@
 const { StatusCodes } = require('http-status-codes')
 const Credential = require("../../../view/credential/credential")
 const JwtToken = require("../../../middleware/jwt")
-const { login: loginService, register: registerService } = require("../service/auth")
+const { login: loginService, register: registerService, updateCredential: updateCredentialService } = require("../service/auth")
 
 const register = async (req, res, next) => {
   try {
@@ -32,7 +32,7 @@ const register = async (req, res, next) => {
   }
 }
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   try {
     const { username, password } = req.body
     if (!username || !password) {
@@ -51,7 +51,7 @@ const login = async (req, res) => {
       secure: false,
       // domain: 'localhost',
       // sameSite: 'none',
-      maxAge: 1000 *  60 * 10,
+      maxAge: 1000 * 60 * 10,
     })
 
     res.status(StatusCodes.OK).json({
@@ -61,22 +61,22 @@ const login = async (req, res) => {
     })
   } catch (error) {
     console.error(error);
-    // next(error)
+    next(error)
   }
 }
 
-const dummyLogin = async (req, res, next) => {
-  const { username, password } = req.body
+const updateCredential = async (req, res, next) => {
+  try {
+    const { username, roleName, isActive } = req.body
+    const credentialID = req.params.credentialID
 
-  const jwt = new JwtToken('123456789', username, password)
-  const token = jwt.generateToken()
-
-  res.cookie('authorization', token)
-  res.status(StatusCodes.OK).json({
-    id: '123456789',
-    username: username,
-    password: password
-  })
+    const credential = new Credential(credentialID, username, undefined, roleName, isActive)
+    await updateCredentialService(credential)
+    res.status(StatusCodes.ACCEPTED).json(null)
+  } catch (error) {
+    console.error(error);
+    next(error)
+  }
 }
 
-module.exports = { login, register, dummyLogin }
+module.exports = { login, register, updateCredential }
