@@ -65,6 +65,20 @@ const login = async (req, res, next) => {
   }
 }
 
+const logout = async (req, res, next) => {
+  try {
+    console.log(" =========== inside logout =========== ");
+    res.cookie("authorization", "", {
+      httpOnly: false, // try this
+      expires: new Date(0),
+    });
+    res.status(StatusCodes.ACCEPTED).json(null)
+  } catch (error) {
+    console.error(error);
+    next(error)
+  }
+}
+
 const updateCredential = async (req, res, next) => {
   try {
     const { username, roleName, isActive } = req.body
@@ -79,4 +93,4 @@ const updateCredential = async (req, res, next) => {
   }
 }
 
-module.exports = { login, register, updateCredential }
+module.exports = { login, register, updateCredential, logout }
