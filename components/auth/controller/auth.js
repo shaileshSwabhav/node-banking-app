@@ -51,7 +51,7 @@ const login = async (req, res, next) => {
       secure: false,
       // domain: 'localhost',
       // sameSite: 'none',
-      maxAge: 1000 * 60 * 10,
+      // maxAge: 1000 * 60 * 10,
     })
 
     res.status(StatusCodes.OK).json({
