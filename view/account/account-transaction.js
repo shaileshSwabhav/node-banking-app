@@ -172,7 +172,7 @@ class AccountTransaction {
         limit: paginate.limit || 5,
         offset: (paginate.limit * paginate.offset) || 0,
         order: [
-          ['createdAt', 'ASC']
+          ['createdAt', 'DESC']
         ],
         include: [{
           model: db.Bank,
@@ -183,7 +183,6 @@ class AccountTransaction {
       const accountTransactions = []
 
       for (let index = 0; index < rows.length; index++) {
-        console.log("rows ->", rows[index].Bank);
         accountTransactions.push(this.createAccTransResponse(rows[index]))
       }
 
