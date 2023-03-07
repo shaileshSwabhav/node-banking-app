@@ -48,10 +48,11 @@ const deleteBank = async (req, res, next) => {
 
 const getAllBanks = async (req, res, next) => {
   try {
-    const queryparams = req.body.query
+    const queryparams = req.query
     const banks = await getBanks(queryparams)
 
-    res.status(StatusCodes.OK).json(banks)
+    res.setHeader("X-Total-Count", banks.count)
+    res.status(StatusCodes.OK).json(banks.rows)
   } catch (error) {
     console.error(error);
     next(error)

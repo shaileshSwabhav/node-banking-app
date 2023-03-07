@@ -1,7 +1,8 @@
 const db = require("../../models/index")
 const BankingAppError = require("../../errors")
 const { Op } = require("sequelize");
-const uuid = require("uuid")
+const uuid = require("uuid");
+const { paginate } = require("../../util/util");
 
 class Bank {
   constructor(fullName, abbreviation) {
@@ -30,38 +31,31 @@ class Bank {
   }
 
   async doesBankAbbreviationExist() {
-    try {
-      const findAbbreviation = await db.Bank.findOne({
-        where: {
-          abbreviation: this.abbreviation,
-          id: {
-            [Op.not]: this.id ? this.id : uuid.NIL
-          },
-        }
-      })
-
-      if (findAbbreviation) {
-        throw new BankingAppError.BadRequestError("Abbreviation already exist.")
+    const findAbbreviation = await db.Bank.findOne({
+      where: {
+        abbreviation: this.abbreviation,
+        id: {
+          [Op.not]: this.id ? this.id : uuid.NIL
+        },
       }
-    } catch (error) {
-      throw new BankingAppError.BadRequestError(error)
+    })
+
+    if (findAbbreviation) {
+      throw new BankingAppError.BadRequestError("Abbreviation already exist.")
     }
   }
 
   async doesBankExist() {
-    try {
-      const findBank = await db.Bank.findOne({
-        where: {
-          id: this.id,
-        }
-      })
-
-      if (!findBank) {
-        throw new BankingAppError.BadRequestError("Bank not found.")
+    const findBank = await db.Bank.findOne({
+      where: {
+        id: this.id,
       }
-    } catch (error) {
-      throw new BankingAppError.BadRequestError(error)
+    })
+
+    if (!findBank) {
+      throw new BankingAppError.BadRequestError("Bank not found.")
     }
+
   }
 
   async addBank(transaction) {
@@ -70,6 +64,7 @@ class Bank {
       return bank
     } catch (error) {
       console.error(error);
+      throw new BankingAppError.BadRequestError("Bank could not be added")
     }
   }
 
@@ -101,28 +96,22 @@ class Bank {
     }
   }
 
-  static createResponse(bank) {
-    const b = new Bank(bank.full_name, bank.abbreviation)
-    b.setBankID(bank.id)
-
-    return b
-  }
-
   static async getBanks(queryparams) {
-    const response = await db.Bank.findAll({
-      where: queryparams
+    // const response = await db.Bank.findAll({
+    //   where: queryparams
+    // })
+
+    const pagination = paginate(queryparams)
+
+    const response = await db.Bank.findAndCountAll({
+      attributes: ['id', ['full_name', 'fullName'], 'abbreviation'],
+      where: queryparams,
+      ...pagination,
     })
 
-    let banks = []
-
-    if (response?.length > 0) {
-      for (let index = 0; index < response.length; index++) {
-        banks.push(this.createResponse(response[index]))
-      }
-    }
-
-    return banks;
+    return response;
   }
+
 
 }
 

@@ -8,11 +8,12 @@ const addBank = async (bank) => {
     // validations
     await bank.doesBankAbbreviationExist()
 
-    await bank.addBank(transaction)
+    const response = await bank.addBank(transaction)
     await transaction.commit()
+    return response
   } catch (error) {
     await transaction.rollback()
-    throw new BankingAppError.BadRequestError(error)
+    throw new BankingAppError.BadRequestError(error.message)
   }
 }
 
@@ -25,8 +26,9 @@ const updateBank = async (bank) => {
     await bank.doesBankAbbreviationExist()
 
     // update
-    await bank.updateBank(transaction)
+    const response = await bank.updateBank(transaction)
     await transaction.commit()
+    return response
   } catch (error) {
     await transaction.rollback()
     throw new BankingAppError.BadRequestError(error)
@@ -37,7 +39,6 @@ const deleteBank = async (bank) => {
   const transaction = await db.sequelize.transaction()
 
   try {
-    console.log("============================= bank id -> ", bank.id);
     // validations
     await bank.doesBankExist()
 

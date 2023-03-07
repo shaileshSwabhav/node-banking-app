@@ -1,6 +1,6 @@
 class BankingAppError extends Error {
-  constructor(errorMessage) {
-    super(errorMessage)
+  constructor(message) {
+    super(message)
   }
 }
 
