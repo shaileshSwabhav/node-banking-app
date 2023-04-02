@@ -106,7 +106,7 @@ class Bank {
     const response = await db.Bank.findAndCountAll({
       attributes: ['id', ['full_name', 'fullName'], 'abbreviation'],
       where: queryparams,
-      ...pagination,
+      ...pagination
     })
 
     return response;

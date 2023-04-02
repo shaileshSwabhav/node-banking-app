@@ -7,6 +7,8 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "db:migrate": "sequelize db:migrate",
+    "db:seed": "sequelize db:seed:all",
+    "db:seed:rollback": "sequelize db:seed:undo:all",
     "db:rollback": "sequelize db:migrate:undo",
     "db:rollback:all": "sequelize db:migrate:undo:all",
     "test": "mocha './**/*.spec.js'"
@@ -25,6 +27,7 @@
     "jsonwebtoken": "^9.0.0",
     "pg": "^8.9.0",
     "pg-hstore": "^2.3.4",
+    "redis": "^4.6.5",
     "sequelize": "^6.28.0",
     "uuid": "^9.0.0"
   },

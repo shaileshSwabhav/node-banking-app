@@ -27,4 +27,11 @@ describe("unit testing bank view", () => {
     const banks = await Bank.getBanks({ limit: 1, offset: 0 })
     expect(banks.rows.length).to.be.equal(1)
   })
+
+  it("testing", () => {
+    var badFn = function () { throw new TypeError('Illegal salmon!'); };
+
+    expect(badFn).to.throw();
+  })
+
 })

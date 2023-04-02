@@ -16,8 +16,14 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Bank.init({
+    id: {
+      allowNull: false,
+      primaryKey: true,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+    },
     full_name: DataTypes.STRING,
-    abbreviation: DataTypes.STRING
+    abbreviation: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Bank',
@@ -26,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'banks'
   });
 
-  Bank.beforeCreate(bank => bank.id = v4());
+  // Bank.beforeCreate(bank => bank.id = v4());
 
   return Bank;
 };

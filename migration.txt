@@ -42,3 +42,10 @@ SEQUELIZE
   - CHECK MIGRATION STATUS
     - command
       - npx sequelize-cli db:migrate:status
+
+  - SEEDERS
+    - command
+      - npx sequelize-cli seed:generate --name fake-users
+      - npx sequelize-cli db:seed:all
+      - npx sequelize-cli db:seed:undo
+      - npx sequelize-cli db:seed:undo:all

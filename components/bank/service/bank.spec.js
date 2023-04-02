@@ -1,4 +1,5 @@
 const { expect } = require("chai")
+const BankingAppError = require("../../../errors")
 const { Bank } = require("../../../view/bank/bank")
 const { addBank, updateBank, deleteBank, getBanks } = require("./bank")
 
@@ -13,10 +14,26 @@ describe("unit testing bank service", () => {
     }
   })
 
+  // it("unit test duplicate bank abbreviation", async () => {
+  //   const bank = new Bank("HDFC Bank", "HDFC")
+    // const response = await addBank(bank)
+    // const func = async function () {
+    //   try {
+    //     console.log("inside function");
+    //     await addBank(bank)
+    //     console.log("function ended");
+    //   } catch (error) {
+    //     console.log("============== error", error.message);
+    //     throw new BankingAppError.BadRequestError(error.message)
+    //   }
+    // }
+    // expect(func).to.throw()
+  // })
+
   it("unit test update bank", async () => {
     try {
-      const bank = new Bank("State Bank Of India", "SBI")
-      bank.setBankID("f2496bc7-b0d1-41d4-a7d3-e52bf9b018a3")
+      const bank = new Bank("Kotak Mahindra Bank", "Kotak")
+      bank.setBankID("f210418f-ad41-45cf-9a43-e9cb071a328f")
       const response = await updateBank(bank)
       expect(response.id).to.not.be.null;
     } catch (error) {
@@ -43,4 +60,5 @@ describe("unit testing bank service", () => {
       console.log("inside error", error.message);
     }
   })
+
 })
