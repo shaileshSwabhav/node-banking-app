@@ -1,6 +1,8 @@
 require("dotenv").config()
 const express = require("express")
 const app = express()
+const swaggerUI = require("swagger-ui-express")
+const swaggerJsDoc = require("swagger-jsdoc")
 
 const cookieParser = require("cookie-parser")
 const cors = require("cors")
@@ -31,6 +33,25 @@ app.use(cors(corsOptions2))
 
 app.use(express.json())
 app.use(cookieParser())
+const PORT = process.env.PORT || 4000
+
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Bank app",
+      version: "1.0.0",
+      description: "Description for banking app"
+    },
+    servers: [{
+      url: `http://localhost:${PORT}`
+    }],
+  },
+  apis: ["./components/bank/controller/bank.js"]
+}
+
+const specs = swaggerJsDoc(swaggerOptions)
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs))
 
 app.get('/', (req, res) => {
   console.log("/ route hit");
@@ -46,7 +67,6 @@ const startApp = async () => {
   try {
     // await redisClient.connect()
     // console.log("redis connected");
-    const PORT = process.env.PORT || 4000
     app.listen(PORT, console.log(`Server started at port ${PORT}`))
   } catch (error) {
     console.error(error);
