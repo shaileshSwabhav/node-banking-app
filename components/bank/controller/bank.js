@@ -7,6 +7,11 @@ const { Bank } = require("../../../view/bank/bank")
 /**
  * @openapi
  * components:
+ *  securitySchemes:
+ *    BearerAuth:
+ *      type: http
+ *      scheme: bearer
+ *      bearerFormat: JWT
  *  schemas:
  *    Banks:
  *      type: object
@@ -56,7 +61,7 @@ const { Bank } = require("../../../view/bank/bank")
  * /api/v1/bank-app/banks:
  *  get:
  *    security:
- *      - auth0_jwk: []
+ *      - BearerAuth: []
  *    tags: [Bank]
  *    summary: Returns all the banks.
  *    parameters:

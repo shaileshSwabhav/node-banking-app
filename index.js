@@ -47,7 +47,7 @@ const swaggerOptions = {
       url: `http://localhost:${PORT}`
     }],
   },
-  apis: ["./components/bank/controller/bank.js"]
+  apis: ["./components/*/controller/*.js"]
 }
 
 const specs = swaggerJsDoc(swaggerOptions)
